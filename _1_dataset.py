@@ -10,6 +10,7 @@ class DataSet():
         self.df_shops = pd.read_csv("./competitive-data-science-predict-future-sales/shops.csv")
         self.df_all = [self.df_train, self.df_test, self.df_subm, self.df_items, self.df_cats, self.df_shops]
 
+        self.cols_train = self.df_train.columns.tolist()
     def print_data_descriptions(self):
         description = """
         File descriptions
@@ -46,18 +47,47 @@ class DataSet():
         for i, df in enumerate(self.df_all):
             print(f" === FILE ({i+1}/{len(self.df_all)}) ===")
             print("COLUMNS:\n", df.columns.tolist(),'\n')
-            print("HEAD:\n", df.head(), '\n')
+            print("HEAD:\n", df.head(), '\n',"TAIL:\n", df.tail(),'\n')
             print("INFO:\n", df.info(), '\n')
             print("DESCRIBE:", df.describe(), '\n')
             print("MISSING VALUES: \n", df.isnull().sum(), '\n')
             print("=====")
             print(f" === FILE ({i+1}/{len(self.df_all)}) ===")
-            next = input("WANT TO READ THE NEXT FILE? [Y]/n")
+            next = input("WANT TO READ THE NEXT FILE? [Y]/n ")
             if next.lower() == 'y':
                 continue
             else:
                 break
 
+    def show_column_details(self):
+        for i, df in enumerate(self.df_all):
+            print(f" === FILE ({i + 1}/{len(self.df_all)}) ===")
+            cols = df.columns.tolist()
+            print("COLUMNS:\n", df.columns.tolist())
+            for col in cols:
+                print(f"col[{col}].nunique : {df[col].nunique()}")
+                print(f"col[{col}].null.count : {df[col].isnull().sum()}")
+                print("-")
+            print("=")
+            print("COLUMNS:\n", df.columns.tolist(), '\n')
+            next = input("WANT TO READ THE NEXT FILE? [Y]/n ")
+            if next.lower() == 'y':
+                continue
+            else:
+                break
+
+    def groupby_df(self, df, by_cols, print_cols=False):
+        try:
+            is_list = len(by_cols)
+        except:
+            by_cols = list(by_cols)
+
+        if print_cols is True:
+            print(df.columns.tolist())
+
+        grp = df.groupby(by_cols, as_index=False)
+
+        return grp
 
 
 
