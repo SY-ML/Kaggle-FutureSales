@@ -56,3 +56,4 @@ grp = pp.groupby_df(pp.df_trainPrcd[['date','date_block_num', 'item_cnt_day']], 
 plt.plot(grp['date_block_num'], grp['item_cnt_day'])
 # plt.plot(grp['date'], grp['item_cnt_day'])
 plt.show()
+print(1)
