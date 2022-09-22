@@ -26,7 +26,7 @@ class PreProcess(DataSet):
 
     def preprocess_df_train(self):
         df = self.df_train
-        # df = self.transform_str2date(df)
+        df = self.transform_str2date(df, 'date')
 
         return df
 
