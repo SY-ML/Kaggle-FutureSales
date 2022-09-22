@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 import statsmodels.api as sm
-from  statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.stattools import adfuller, acf, pacf, arma_order_select_ic
 
 class Visualize(PreProcess):
     def __init__(self):
@@ -77,5 +78,13 @@ class Visualize(PreProcess):
         decomp = sm.tsa.seasonal_decompose(df.values, period=12, model='multiplicative')
         decomp.plot()
         self.showTitleLabels("DECOMPOSED TOTAL SALES COUNT BY MONTH", 'MONTH')
+    #
+    # def test_stationarity(self, timeseries):
+    #     print("== ADF TEST RESULT ==")
+    #     df_test = adfuller(timeseries, autolag="AIC")
+    #     df_output = pd.Series(df_test[0:4], index=['Test Statistic', 'p-value', '#Lags Used','Number of Observations Used']])
+    #
+    #     for key, value in df_test[4].items():
+    #         df_output['Critical Value (%s)'%key] = value
+    #     print(df_output)
 
-    def test_stationarity(self, ):

@@ -62,8 +62,9 @@ df_train = pp.df_trainPrcd
 ### Total Sales Count by month
 # vs.total_sales_count_by_month()
 
-vs.TSMB_Decomposed_Multi()
-vs.TSMB_Decomposed_Add()
+# vs.TSMB_Decomposed_Multi()
+# vs.TSMB_Decomposed_Add()
+print(vs.TSBM)
 exit()
 
 
