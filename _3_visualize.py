@@ -14,21 +14,34 @@ class Visualize(PreProcess):
     def __init__(self):
         super().__init__()
         self.TSBM = self.TOTALSALESCOUNT_BYMONTH(show_plot=False)
-
+        _, self.TSBM_DTRD, self.TSBM_DESND = self.TSMB_OrgVsDetrendedVsDeseasonalized(show_plots=False)
 
     """
     
     """
 
-    def showTitleLabels(self, title=None, x_label=None, y_label=None):
+    def showTitleLabels(self, title=None, x_label=None, y_label=None, show=True):
         if title is not None:
             plt.title(title)
         if x_label is not None:
             plt.xlabel(x_label)
         if y_label is not None:
             plt.ylabel(y_label)
-        plt.tight_layout()
-        plt.show()
+
+        if show is True:
+            plt.tight_layout()
+            plt.show()
+
+    def axTitleLabels(self, ax, title=None, x_label=None, y_label=None, show=True):
+        if title is not None:
+            ax.set_title(title)
+        if x_label is not None:
+            ax.set_xlabel(x_label)
+        if y_label is not None:
+            ax.set_ylabel(y_label)
+        if show is True:
+            plt.tight_layout()
+            plt.show()
 
     def number_of_items_per_category(self, show_plot=True):
         df_items = self.df_items
@@ -78,13 +91,43 @@ class Visualize(PreProcess):
         decomp = sm.tsa.seasonal_decompose(df.values, period=12, model='multiplicative')
         decomp.plot()
         self.showTitleLabels("DECOMPOSED TOTAL SALES COUNT BY MONTH", 'MONTH')
-    #
-    # def test_stationarity(self, timeseries):
-    #     print("== ADF TEST RESULT ==")
-    #     df_test = adfuller(timeseries, autolag="AIC")
-    #     df_output = pd.Series(df_test[0:4], index=['Test Statistic', 'p-value', '#Lags Used','Number of Observations Used']])
-    #
-    #     for key, value in df_test[4].items():
-    #         df_output['Critical Value (%s)'%key] = value
-    #     print(df_output)
+
+    def test_stationarity(self, timeseries, dataName = ""):
+        # Perform Dickey-Fuller test
+        message = f"\n== ADF TEST RESULT ==" if dataName =="" else f"\n== [{dataName}] ADF TEST RESULT =="
+
+        print(message)
+        df_test = adfuller(timeseries, autolag="AIC")
+        df_output = pd.Series(df_test[0:4], index=['Test Statistic', 'p-value', '#Lags Used','Number of Observations Used'])
+
+        for key, value in df_test[4].items():
+            df_output['Critical Value (%s)'%key] = value
+        print(df_output)
+
+    def create_difference(self, dataset, interval = 1):
+        diff = []
+        for i in range(interval, len(dataset)):
+            value = dataset[i] - dataset[i-interval]
+            diff.append(value)
+        return pd.Series(diff)
+
+    def invert_difference(self, last_ob, value):
+        return value + last_ob
+
+
+    def TSMB_OrgVsDetrendedVsDeseasonalized(self, show_plots = True):
+        df = self.TSBM # original data
+        df_dt = self.create_difference(df) # de-trended data. next month - current month
+        df_ds = self.create_difference(df, 12) # de-seasonalized data, # month of the next year - month of this year
+
+        if show_plots is True:
+            fig, ax = plt.subplots(3, 1, figsize=(18, 10))
+            ax[0].plot(df)
+            self.axTitleLabels(ax[0], "ORIGINAL DATA", 'TIME', 'ITEMCNT/DAY', show=False)
+            ax[1].plot(df_dt)
+            self.axTitleLabels(ax[1], "DE-TRENDED DATA", 'TIME', 'ITEMCNT/DAY', show=False)
+            ax[2].plot(df_ds)
+            self.axTitleLabels(ax[2],"DE-SEASONALIZED DATA", 'TIME', 'ITEMCNT/DAY', show=True)
+
+        return df, df_dt, df_ds
 

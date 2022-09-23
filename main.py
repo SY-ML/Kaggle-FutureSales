@@ -64,24 +64,23 @@ df_train = pp.df_trainPrcd
 
 # vs.TSMB_Decomposed_Multi()
 # vs.TSMB_Decomposed_Add()
-print(vs.TSBM)
-exit()
 
+# vs.test_stationarity(vs.TSBM)
+# vs.TSMB_OrgVsDetrendedVsDeseasonalized()
+# vs.test_stationarity(vs.TSBM_DTRD)
+# vs.test_stationarity(vs.TSBM_DESND, "TSBM_De-Trended")
+"""
+Now after the transformations, our p-value for the DF test is well within 5 %. Hence we can assume Stationarity of the series
+We can easily get back the original series using the inverse transform function that we have defined above.
 
+Now let's dive into making the forecasts!
+"""
 
-grp_saleCnt_byItem = df_train.groupby(['item_id'])['item_cnt_day'].sum()
-# print(grp_saleCnt_byItem)
+### AR, MA, and ARMA models:
+
 
 
 """
 df_train columns:
 ['date', 'date_block_num', 'shop_id', 'item_id', 'item_price', 'item_cnt_day']
 """
-
-
-# print(pp.cols_train)
-# grp = pp.groupby_df(pp.df_trainPrcd[['date','date_block_num', 'item_cnt_day']], 'date', print_cols=True).sum()
-# plt.plot(grp['date_block_num'], grp['item_cnt_day'])
-# plt.plot(grp['date'], grp['item_cnt_day'])
-# plt.show()
-# print(1)
