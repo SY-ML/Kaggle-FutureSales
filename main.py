@@ -1,7 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+import numpy as np
+import statsmodels.tsa.api as smt
 """
 REFERENCE
 https://www.kaggle.com/code/jagangupta/time-series-basics-exploring-traditional-ts
@@ -77,8 +78,34 @@ Now let's dive into making the forecasts!
 """
 
 ### AR, MA, and ARMA models:
+# Simulate an AR(1) process with alpha = 0.6
+np.random.seed(1)
+n_samples = int(1000)
+a = 0.6
+x = w = np.random.normal(size=n_samples)
 
+for t in range(n_samples):
+    x[t] = a*x[t-1] + w[t]
+limit=12
+# _ = vs.TSBM_plot(x, lags = limit, title="AR(1) process")
 
+# Simulate an AR(2) process
+n = int(1000)
+alphas = np.array([.444, .333])
+betas = np.array([0.])
+
+print(alphas)
+print(betas)
+
+# Python requires us to specify the zero-lag value which is 1
+# Also note that the alphas for the AR model must be negated
+# We also set the betas for the MA equal to 0 for an AR(p) model
+# For more information see the examples at statsmodels.org
+ar = np.r_[1, -alphas]
+ma = np.r_[1, betas]
+
+ar2 = smt.arma_generate_sample(ar=ar, ma=ma, nsample=n)
+_ = vs.TSBM_plot(ar2, lags=12,title="AR(2) process")
 
 """
 df_train columns:

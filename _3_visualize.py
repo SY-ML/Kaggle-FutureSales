@@ -9,6 +9,9 @@ import seaborn as sns
 import statsmodels.api as sm
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.tsa.stattools import adfuller, acf, pacf, arma_order_select_ic
+import statsmodels.tsa.api as smt
+import scipy.stats as scs
+
 
 class Visualize(PreProcess):
     def __init__(self):
@@ -131,3 +134,28 @@ class Visualize(PreProcess):
 
         return df, df_dt, df_ds
 
+    def TSBM_plot(self, y, lags=None, figsize=(10,8), style='bmh', title=""):
+        if not isinstance(y, pd.Series):
+            y = pd.Series(y)
+        with plt.style.context(style):# todo-check
+            fig = plt.figure(figsize=figsize)
+            # mpl.rcParams['font.family'] = 'Ubuntu Mono'
+            layout = (3, 2)
+            ts_ax = plt.subplot2grid(layout, (0, 0), colspan=2) #todo-check
+            acf_ax = plt.subplot2grid(layout, (1, 0))
+            pacf_ax = plt.subplot2grid(layout, (1, 1))
+            qq_ax = plt.subplot2grid(layout, (2, 0))
+            pp_ax = plt.subplot2grid(layout, (2, 1))
+
+            y.plot(ax=ts_ax)
+            ts_ax.set_title(title)
+            smt.graphics.plot_acf(y, lags=lags, ax=acf_ax, alpha=0.5) #todo-check
+            smt.graphics.plot_pacf(y, lags=lags, ax=pacf_ax, alpha=0.5)
+            sm.qqplot(y, line='s', ax=qq_ax) #todo-check
+            qq_ax.set_title('QQ Plot')
+            scs.probplot(y, sparams=(y.mean(), y.std()), plot=pp_ax) # todo-check
+
+            plt.tight_layout()
+            plt.show()
+
+            return
