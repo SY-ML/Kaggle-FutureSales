@@ -107,6 +107,64 @@ ma = np.r_[1, betas]
 ar2 = smt.arma_generate_sample(ar=ar, ma=ma, nsample=n)
 _ = vs.TSBM_plot(ar2, lags=12,title="AR(2) process")
 
+
+# Simulate an MA(1) process
+n = int(1000)
+# set the AR(p) alphas equal to 0
+alphas = np.array([0.])
+betas = np.array([0.8])
+# add zero-lag and negate alphas
+ar = np.r_[1, -alphas]
+ma = np.r_[1, betas]
+ma1 = smt.arma_generate_sample(ar=ar, ma=ma, nsample=n)
+limit=12
+_ = vs.TSBM_plot(ma1, lags=limit,title="MA(1) process")
+
+
+# Simulate MA(2) process with betas 0.6, 0.4
+n = int(1000)
+alphas = np.array([0.])
+betas = np.array([0.6, 0.4])
+ar = np.r_[1, -alphas]
+ma = np.r_[1, betas]
+
+ma3 = smt.arma_generate_sample(ar=ar, ma=ma, nsample=n)
+_ = vs.TSBM_plot(ma3, lags=12,title="MA(2) process")
+
+# Simulate an ARMA(2, 2) model with alphas=[0.5,-0.25] and betas=[0.5,-0.3]
+max_lag = 12
+
+n = int(5000) # lots of samples to help estimates
+burn = int(n/10) # number of samples to discard before fit
+
+alphas = np.array([0.8, -0.65])
+betas = np.array([0.5, -0.7])
+ar = np.r_[1, -alphas]
+ma = np.r_[1, betas]
+
+arma22 = smt.arma_generate_sample(ar=ar, ma=ma, nsample=n, burnin=burn)
+_ = vs.TSBM_plot(arma22, lags=max_lag,title="ARMA(2,2) process")
+# pick best order by aic
+# smallest aic value wins
+best_aic = np.inf
+best_order = None
+best_mdl = None
+
+rng = range(5)
+for i in rng:
+    for j in rng:
+        try:
+            tmp_mdl = smt.ARMA(arma22, order=(i, j)).fit(method='mle', trend='nc')
+            tmp_aic = tmp_mdl.aic
+            if tmp_aic < best_aic:
+                best_aic = tmp_aic
+                best_order = (i, j)
+                best_mdl = tmp_mdl
+        except: continue
+
+
+print('aic: {:6.5f} | order: {}'.format(best_aic, best_order))
+
 """
 df_train columns:
 ['date', 'date_block_num', 'shop_id', 'item_id', 'item_price', 'item_cnt_day']
